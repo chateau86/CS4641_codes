@@ -100,4 +100,8 @@ ENV/
 # mypy
 .mypy_cache/
 
-#neat-checkpoint-*
+neat-checkpoint-*
+*.gv
+*.svg
+runStat
+
