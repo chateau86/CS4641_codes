@@ -1,5 +1,7 @@
 #! python3
 #Woradorn K.
+
+#Subsample image to 24*24
 import neat
 import os
 import visualize
@@ -34,7 +36,7 @@ def eval_single(genomeT, config):
     global faceArr, moodArr, pairArr
     if len(moodArr)==0:
         print('Init worker thread')
-        (faceArr,moodArr) = faceImport.faceReader('subset.csv')
+        (faceArr,moodArr) = faceImport.faceReader('subset.csv', subsample = 2)
         pairArr = list(zip(faceArr,moodArr))
     genome_id = genomeT[0]
     genome = genomeT[1]
@@ -42,8 +44,12 @@ def eval_single(genomeT, config):
     net = neat.nn.FeedForwardNetwork.create(genome, config)
     for xi, xo in pairArr:
         output = net.activate(xi)
+        #if not np.argmax(output) == np.argmax(xo): #harsher eval
+        #    fitness -= 1
         for i in range(len(output)):
-            fitness -= (output[i]- xo[i])**2
+        #    fitness -= (output[i]- xo[i])**2
+            if abs(output[i]- xo[i])>0.5:
+                fitness -= 1
     fitness /= len(moodArr)
     return fitness
   
@@ -63,7 +69,7 @@ def run(config_file):
     p.add_reporter(neat.Checkpointer(10))
 
     # Run for up to ## generations.
-    winner = p.run(eval_genomes, 100)
+    winner = p.run(eval_genomes, 30)
 
     # Display the winning genome.
     print('\nBest genome:\n{!s}'.format(winner))
@@ -77,24 +83,24 @@ def run(config_file):
         #print("expected output {!r}, got {}".format(xo, output))
 
     #node_names = {-1:'A', -2: 'B', -3:'C_in', 0:'A+B', 1:'C_out'}
-    #visualize.draw_net(config, winner, view=False, node_names=node_names)
+    visualize.draw_net(config, winner, view=False)
     visualize.plot_stats(stats, ylog=True, view=False)
     visualize.plot_species(stats, view=False)
 
     #p = neat.Checkpointer.restore_checkpoint('neat-checkpoint-19')
-    #p.run(eval_genomes, 10)
+    #p.run(eval_genomes, 10) #This runs a few more generations of NN from checkpoint
 
 if __name__ == '__main__':
     # Determine path to configuration file. This path manipulation is
     # here so that the script will run successfully regardless of the
     # current working directory.
     local_dir = os.path.dirname(__file__)
-    config_path = os.path.join(local_dir, 'neatConfig.txt')
-    (faceArr,moodArr) = faceImport.faceReader('subset.csv')
+    config_path = os.path.join(local_dir, 'neatConfig_ss.txt')
+    (faceArr,moodArr) = faceImport.faceReader('subset.csv', subsample = 2)
     pairArr = list(zip(faceArr,moodArr))
     print('Pairs: {}'.format(len(pairArr)))
     if CPUpool is None:
-        CPUpool = mp.ProcessingPool(4)
+        CPUpool = mp.ProcessingPool(8)
     run(config_path)
     
     
