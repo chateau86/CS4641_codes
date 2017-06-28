@@ -100,7 +100,7 @@ if __name__ == '__main__':
     pairArr = list(zip(faceArr,moodArr))
     print('Pairs: {}'.format(len(pairArr)))
     if CPUpool is None:
-        CPUpool = mp.ProcessingPool(8)
+        CPUpool = mp.ProcessingPool(4)
     run(config_path)
     
     
