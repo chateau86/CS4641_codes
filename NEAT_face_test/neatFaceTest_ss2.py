@@ -67,16 +67,15 @@ def run(config_file):
     # Create the population, which is the top-level object for a NEAT run.
     #p = neat.Population(config)
     #uncomment to resume
-    p = neat.Checkpointer.restore_checkpoint('neat-checkpoint-2270')
+    p = neat.Checkpointer.restore_checkpoint('neat-checkpoint-279')
     config = neat.Config(neat.DefaultGenome, neat.DefaultReproduction,
                          neat.DefaultSpeciesSet, neat.DefaultStagnation,
                          config_file)
-
     # Add a stdout reporter to show progress in the terminal.
     p.add_reporter(neat.StdOutReporter(True))
     stats = neat.StatisticsReporter()
     p.add_reporter(stats)
-    p.add_reporter(neat.Checkpointer(10))
+    p.add_reporter(neat.Checkpointer(5))
 
 
     #for i in range(100):
@@ -111,7 +110,7 @@ if __name__ == '__main__':
     # here so that the script will run successfully regardless of the
     # current working directory.
     local_dir = os.path.dirname(__file__)
-    config_path = os.path.join(local_dir, 'neatConfig_ss.txt')
+    config_path = os.path.join(local_dir, 'neatConfig_ss2.txt')
     (faceArr,moodArr) = faceImport.faceReader('subset.csv', subsample = 2)
     pairArr = list(zip(faceArr,moodArr))
     print('Pairs: {}'.format(len(pairArr)))
