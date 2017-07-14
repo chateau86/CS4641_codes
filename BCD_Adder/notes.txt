@@ -1,0 +1,3 @@
+->Sigmoid behave the closest to BJT transistor
+->Voltage summing can be done with resistors
+-->Negative value = {V < V_ref}
