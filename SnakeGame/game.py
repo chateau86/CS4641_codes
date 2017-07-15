@@ -54,18 +54,23 @@ class gameState:
         #pprint.pprint(self.gameGrid)
         #do fwd up
         fu = self.gameGrid
+        #now turn fu into subset
+        fu = np.tile(fu, (3,3))
+        fuc = np.add(self._headLoc,self._gridSize)
+        width = 2
+        fu = fu[fuc[0]-width:fuc[0]+width+1,fuc[1]-width:fuc[1]+width+1]
         for i in range(self.snakeDir):
             fu = np.rot90(fu)
         pprint.pprint(self.gameGrid)
         pprint.pprint(fu) #ROT90 is CW
-
         
     def _placeFood(self):
         if self._foodCount >= 1:
             return
         while self._foodCount < 1:
-            foodX = self._rng.randint(0,self._gridSize[0])
-            foodY = self._rng.randint(0,self._gridSize[1])
+            foodX = self._rng.randint(0,self._gridSize[0]-1)
+            foodY = self._rng.randint(0,self._gridSize[1]-1)
+            print('put food at {}'.format((foodX, foodY)))
             if self.gameGrid[foodX][foodY] == 0:
                 self._foodLoc =(foodX,foodY)
                 self._foodCount += 1
