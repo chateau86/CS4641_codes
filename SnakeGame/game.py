@@ -51,7 +51,14 @@ class gameState:
     def printState(self):
         print('hdg: {}'.format(self.snakeDir))
         print('score: {}'.format(self.score))
+        #pprint.pprint(self.gameGrid)
+        #do fwd up
+        fu = self.gameGrid
+        for i in range(self.snakeDir):
+            fu = np.rot90(fu)
         pprint.pprint(self.gameGrid)
+        pprint.pprint(fu) #ROT90 is CW
+
         
     def _placeFood(self):
         if self._foodCount >= 1:
