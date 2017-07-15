@@ -2,6 +2,7 @@
 #Woradorn K.
 import pprint
 import random
+import math
 import numpy as np
 dirMap = {0:(-1,0), 1:(0,1), 2:(1,0), 3:(0,-1)}
 decrementSnek = np.vectorize(lambda v: (v-1) if v>0 else v)
@@ -23,6 +24,7 @@ class gameState:
         self._placeFood()
     def run(self, ctrlIn):
         #ctrlIn = {-1: turn left, 0: no turn, 1: turn right}
+        assert (-1<=ctrlIn<=1), 'Invalid input'
         self.snakeDir += ctrlIn
         self.snakeDir %= 4
         dPos = dirMap[self.snakeDir]
@@ -47,12 +49,6 @@ class gameState:
         
     def look(self):
         #return what snake see
-        return
-    def printState(self):
-        print('hdg: {}'.format(self.snakeDir))
-        print('score: {}'.format(self.score))
-        #pprint.pprint(self.gameGrid)
-        #do fwd up
         fu = self.gameGrid
         #now turn fu into subset
         fu = np.tile(fu, (3,3))
@@ -61,8 +57,15 @@ class gameState:
         fu = fu[fuc[0]-width:fuc[0]+width+1,fuc[1]-width:fuc[1]+width+1]
         for i in range(self.snakeDir):
             fu = np.rot90(fu)
+        return fu
+    def printState(self):
+        print('hdg: {}'.format(self.snakeDir))
+        print('score: {}'.format(self.score))
+        print('brg: {}'.format(self._getBrg()))
+        #pprint.pprint(self.gameGrid)
+        #do fwd up
         pprint.pprint(self.gameGrid)
-        pprint.pprint(fu) #ROT90 is CW
+        pprint.pprint(self.look()) #ROT90 is CW
         
     def _placeFood(self):
         if self._foodCount >= 1:
@@ -76,4 +79,16 @@ class gameState:
                 self._foodCount += 1
                 self.gameGrid[foodX][foodY] = -1
                 return
-            
+    def _getBrg(self):
+        #get relative loc of food
+        #get world frame vector
+        dR = np.subtract(self._foodLoc, self._headLoc)
+        dx = min(dR[0], self._gridSize[0] - dR[0], key = abs)
+        dy = min(dR[1], self._gridSize[1] - dR[1], key = abs)
+        dr = [[dx],[dy]] #in world frame
+        #TODO: Cache matrix
+        #TODO: invert first component
+        rMat = [[int(math.cos(math.radians(90*self.snakeDir))), int(-math.sin(math.radians(90*self.snakeDir)))],
+                [int(math.sin(math.radians(90*self.snakeDir))), int(math.cos(math.radians(90*self.snakeDir)))]]
+        dr = np.dot(rMat, dr).flatten()
+        return dr
