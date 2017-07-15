@@ -31,23 +31,41 @@ class dataGen:
             
         for i in range(10**digits):
             for j in range(10**digits):
-                inp = int2bcd(i) + int2bcd(j)
-                out = int2bcd(i+j)
-                if len(out) > 4*digits:
-                    out = out[3:]
-                else:
-                    out = [0]+out
+                inp = int2bcd(i,digits) + int2bcd(j,digits)
+                out = int2bcd(i+j,digits, carryOut = True)
+                #if len(out) > 4*digits:
+                #    out = out[3:]
+                #else:
+                #    out = [0]+out
                 self.trainSet[0].append(tuple(inp))
                 self.trainSet[1].append(tuple(out))
                 if i*(10**digits)+j in self.pick:
                     self.testSet[0].append(tuple(inp))
                     self.testSet[1].append(tuple(out))
         
-def int2bcd(num):
+def int2bcd(num, digits, carryOut = False):
+    #print('num: {}'.format(num))
     if not num in BCDcache:
+        #print('cache miss: {}'.format(num))
+        di = digits
         out = []
-        ns = str(num)
+        ns = str(num).zfill(digits)
         for d in ns:
             out+=toBCD[int(d)]
+            di -= 1
+        while di > 0:
+            out = [0,0,0,0]+out
+            di -= 1
         BCDcache[num] = out
-    return BCDcache[num]
+    else:
+        out = BCDcache[num]
+    #print('out: {}'.format(out))
+    if carryOut:
+        #print('ci')
+        if len(out) > 4*digits:
+            out = out[3:]
+        else:
+            out = [0]+out
+        assert(len(out) == digits*4+1, 'length mismatch: {}'.format(num))
+    #print('out: {}'.format(out))
+    return out

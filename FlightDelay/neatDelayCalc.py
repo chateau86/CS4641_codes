@@ -47,7 +47,7 @@ def eval_single(genomeT, config, setNum):
         xi = dataArr[setNum][0][ind]
         xo = dataArr[setNum][1][ind]
         output = net.activate(xi)[0]
-        fitness -= (output - xo)**2
+        fitness -= abs(output - xo)
     fitness /= len(dataArr[setNum][0])      
     return fitness
   
@@ -103,7 +103,7 @@ def run(config_file):
         xi = dataArr[buckets][0][ind]
         xo = dataArr[buckets][1][ind]
         output = winner_net.activate(xi)
-        print("expected output {!r}, got [".format(xo)+" ".join("%.1f" % x for x in output)+"]")
+        print("expected output {:.4f}, got [".format(xo)+" ".join("%.4f" % x for x in output)+"]")
         fitness -= (output[0] - xo)**2
     fitness /= len(dataArr[buckets][0])  
     print('Winner fitness = {:.2f}'.format(fitness))
