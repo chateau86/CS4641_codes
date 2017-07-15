@@ -14,7 +14,7 @@ import dataGen
 CPUpool = None
 
 DIGITS = 1
-trainPerIter = 50
+trainPerIter = 80
 #def eval_genomes(genomes, config):
 #    for genome_id, genome in genomes:
 #        genome.fitness = 8.0
@@ -65,17 +65,17 @@ def run(config_file):
                          config_file)
 
     # Create the population, which is the top-level object for a NEAT run.
-    p = neat.Population(config)
-
+    #p = neat.Population(config)
+    p = neat.Checkpointer.restore_checkpoint('neat-checkpoint-999')
     # Add a stdout reporter to show progress in the terminal.
     p.add_reporter(neat.StdOutReporter(True))
     stats = neat.StatisticsReporter()
     p.add_reporter(stats)
-    p.add_reporter(neat.Checkpointer(20))
+    p.add_reporter(neat.Checkpointer(50))
 
     # Run for up to 500 generations.
     #winner = p.run(eval_genomes, 500)
-    for i in range(100):
+    for i in range(200):
         winner = p.run(eval_genomes, 10)
         print('visualizing stats')
         visualize.draw_net(config, winner, view=False)
@@ -86,10 +86,17 @@ def run(config_file):
     # Show output of the most fit genome against training data.
     print('\nOutput:')
     winner_net = neat.nn.FeedForwardNetwork.create(winner, config)
-    for xi, xo in zip(add_in, add_out):
-        output = winner_net.activate(xi)
-        print("input {!r}, expected output {!r}, got {!r}".format(xi, xo, output))
-
+    A = np.random.randint(10**DIGITS, size=20)
+    B = np.random.randint(10**DIGITS, size=20)
+    S = np.add(A,B)
+    
+    #for xi, xo in zip(add_in, add_out):
+    for aa,bb,ss in zip(A,B,S):
+        a = dataGen.int2bcd(aa, DIGITS)
+        b = dataGen.int2bcd(bb, DIGITS)
+        s = dataGen.int2bcd(ss, DIGITS, carryOut = True)
+        output = winner_net.activate(a+b)
+        print("input {!r}, expected output {!r}, got [".format([aa,bb], s)+" ".join("%.4f" % x for x in output)+"]")
     #node_names = {-1:'A', -2: 'B', -3:'C_in', 0:'A+B', 1:'C_out'}
     #visualize.draw_net(config, winner, view=False, node_names=node_names)
     visualize.draw_net(config, winner, view=False)
