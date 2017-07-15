@@ -66,6 +66,6 @@ def int2bcd(num, digits, carryOut = False):
             out = out[3:]
         else:
             out = [0]+out
-        assert(len(out) == digits*4+1, 'length mismatch: {}'.format(num))
+        #assert(len(out) == digits*4+1, 'length mismatch: {}'.format(num))
     #print('out: {}'.format(out))
     return out

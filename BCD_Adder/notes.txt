@@ -1,3 +1,11 @@
+So, Why is this a good idea?
+    -Since NEAT seems to favor simpler structure (if only by the virtue of constantly fucking up when trying to increase complexity), NEAT should be perfect for finding the minimum complexity required for a model. This is very similar to logical simplification (and K-maps) as seen in CS2110. This project will explore the use of NEAT in lieu of other logic reduction methods.
+    
+But why BCD adder?
+    -A full-adder is trivial for NEAT. However, a BCD (Binary-coded decimal) adder requires 3 adders and some glue logic just for a single decimal digit. NEAT might be able to outdo the existing design.
+
+
+
 ->Sigmoid behave the closest to BJT transistor
 ->Voltage summing can be done with resistors
 -->Negative value = {V < V_ref}

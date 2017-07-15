@@ -42,9 +42,6 @@ def eval_single(genomeT, config, testcase):
     genome_id = genomeT[0]
     genome = genomeT[1]
     genome.fitness = 0
-    #A = list(map(lambda a: dataGen.int2bcd(a, DIGITS), testcase[0]))
-    #B = list(map(lambda a: dataGen.int2bcd(a, DIGITS), testcase[1]))
-    #S = list(map(lambda a: dataGen.int2bcd(a, DIGITS, carryOut = True), testcase[2]))
     A = testcase[0]
     B = testcase[1]
     S = testcase[2]
@@ -109,7 +106,7 @@ if __name__ == '__main__':
     local_dir = os.path.dirname(__file__)
     config_path = os.path.join(local_dir, 'neatConfig.txt')
     if CPUpool is None:
-        CPUpool = mp.ProcessingPool(3)
+        CPUpool = mp.ProcessingPool(4)
     run(config_path)
     #cProfile.run('run(config_path)','runStat')
     #p = pstats.Stats('runStat')
