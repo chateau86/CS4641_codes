@@ -43,7 +43,6 @@ class gameState:
         print('add snake')
         self.gameGrid[newPos] = self.score + 2
         self._headLoc = newPos
-
         self.printState()
         
     def look(self):
