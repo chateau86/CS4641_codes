@@ -6,6 +6,7 @@ import math
 import numpy as np
 dirMap = {0:(-1,0), 1:(0,1), 2:(1,0), 3:(0,-1)}
 decrementSnek = np.vectorize(lambda v: (v-1) if v>0 else v)
+rMatCache = {}
 class gameState:
     gameGrid = []
     snakeDir = 0 #hdg/90
@@ -31,7 +32,10 @@ class gameState:
         newPos = tuple(np.mod(np.add(self._headLoc, dPos), self._gridSize))
         lookAhead = self.gameGrid[newPos]
         #print('lookahead at {} saw {}'.format(newPos,lookAhead))
-        assert(lookAhead <= 0), 'Ate self, died.'
+        #assert(lookAhead <= 0), 'Ate self, died.'
+        if lookAhead > 1: #If see 1, tail will stay *just* clear of the mouth
+            print('dead')
+            return self.score
         #TODO: Death logic
         if lookAhead == -1:
             print('GOT FOOD')
@@ -46,6 +50,7 @@ class gameState:
         self.gameGrid[newPos] = self.score + 2
         self._headLoc = newPos
         self.printState()
+        return -1
         
     def look(self):
         #return what snake see
@@ -57,7 +62,9 @@ class gameState:
         fu = fu[fuc[0]-width:fuc[0]+width+1,fuc[1]-width:fuc[1]+width+1]
         for i in range(self.snakeDir):
             fu = np.rot90(fu)
-        return fu
+        brg = self._getBrg()
+        return (fu, brg)
+        
     def printState(self):
         print('hdg: {}'.format(self.snakeDir))
         print('score: {}'.format(self.score))
@@ -65,7 +72,9 @@ class gameState:
         #pprint.pprint(self.gameGrid)
         #do fwd up
         pprint.pprint(self.gameGrid)
-        pprint.pprint(self.look()) #ROT90 is CW
+        l = self.look()
+        pprint.pprint(l[1])
+        pprint.pprint(l[0])
         
     def _placeFood(self):
         if self._foodCount >= 1:
@@ -87,8 +96,8 @@ class gameState:
         dy = min(dR[1], self._gridSize[1] - dR[1], key = abs)
         dr = [[dx],[dy]] #in world frame
         #TODO: Cache matrix
-        #TODO: invert first component
-        rMat = [[int(math.cos(math.radians(90*self.snakeDir))), int(-math.sin(math.radians(90*self.snakeDir)))],
-                [int(math.sin(math.radians(90*self.snakeDir))), int(math.cos(math.radians(90*self.snakeDir)))]]
-        dr = np.dot(rMat, dr).flatten()
+        if self.snakeDir not in rMatCache:
+            rMatCache[self.snakeDir] = [[-int(math.cos(math.radians(90*self.snakeDir))), int(math.sin(math.radians(90*self.snakeDir)))],
+                    [int(math.sin(math.radians(90*self.snakeDir))), int(math.cos(math.radians(90*self.snakeDir)))]]
+        dr = np.dot(rMatCache[self.snakeDir], dr).flatten()
         return dr
