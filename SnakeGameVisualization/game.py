@@ -75,9 +75,6 @@ class gameState:
         l = self.look()
         pprint.pprint(l[1])
         pprint.pprint(l[0])
-
-    def getState(self):
-        return self.gameGrid
         
     def _placeFood(self):
         if self._foodCount >= 1:

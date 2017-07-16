@@ -87,17 +87,18 @@ def visualizeGame(input_array):
 
 g = game.gameState()
 g.printState()
-g.score = 7
+#g.score = 7
 while True:
     for i in range(10):
         g.run(0)
         # g.printState()
         # time.sleep(1)
-        input_array = g.getState()
+        #input_array = g.getState()
         # print "Input Array: ", input_array
-        visualizeGame(input_array)
-
+        visualizeGame(g.gameGrid)
     g.run(1)
-    g.printState()
+    visualizeGame(g.gameGrid)
+    #g.printState()
     g.run(-1)
-    g.printState()
+    visualizeGame(g.gameGrid)
+    #g.printState()
