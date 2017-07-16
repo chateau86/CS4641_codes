@@ -3,7 +3,7 @@
 [NEAT]
 fitness_criterion     = max
 fitness_threshold     = -0.001
-pop_size              = 500
+pop_size              = 2000
 reset_on_extinction   = True
 
 [DefaultGenome]
@@ -31,8 +31,8 @@ compatibility_disjoint_coefficient = 1.0
 compatibility_weight_coefficient   = 0.5
 
 # connection add/remove rates
-conn_add_prob           = 0.9
-conn_delete_prob        = 0.2
+conn_add_prob           = 0.50
+conn_delete_prob        = 0.30
 
 # connection enable options
 enabled_default         = True
@@ -42,11 +42,11 @@ feed_forward            = True
 initial_connection      = full
 
 # node add/remove rates
-node_add_prob           = 0.20
-node_delete_prob        = 0.22
+node_add_prob           = 0.30
+node_delete_prob        = 0.10
 
 # network parameters
-num_hidden              = 0
+num_hidden              = 6
 num_inputs              = 10
 num_outputs             = 1
 
