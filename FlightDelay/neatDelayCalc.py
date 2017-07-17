@@ -10,7 +10,9 @@ import pstats
 import numpy as np
 import collections
 import pathos.multiprocessing as mp
+import math
 import fileSampler
+import saveStat
 
 dataArr = []
 
@@ -47,8 +49,9 @@ def eval_single(genomeT, config, setNum):
         xi = dataArr[setNum][0][ind]
         xo = dataArr[setNum][1][ind]
         output = net.activate(xi)[0]
-        fitness -= abs(output - xo)
-    fitness /= len(dataArr[setNum][0])      
+        fitness += abs(output - xo)**2
+    fitness /= len(dataArr[setNum][0])
+    fitness = -math.sqrt(fitness)
     return fitness
   
 def run(config_file):
@@ -68,7 +71,7 @@ def run(config_file):
     p.add_reporter(neat.StdOutReporter(True))
     stats = neat.StatisticsReporter()
     p.add_reporter(stats)
-    p.add_reporter(neat.Checkpointer(5))
+    p.add_reporter(neat.Checkpointer(10))
     node_names = {
         -1:'hour',
         -2: 'windN',
@@ -83,13 +86,13 @@ def run(config_file):
         0:'Delay' 
     }
 
-    for i in range(100):
+    for i in range(1000):
         # Run for up to ## generations.
         winner = p.run(eval_genomes, 10)
         print('visualizing stats')
-        visualize.draw_net(config, winner, view=False,  node_names=node_names)
-        #visualize.plot_stats(stats, ylog=True, view=False)
-        #visualize.plot_species(stats, view=False)
+        visualize.draw_net(config, winner, view=False,  node_names=node_names, filename = 'nets/net_loop_{}'.format(i))
+        saveStat.dump_stats(stats, 'statsGraph.csv')
+        saveStat.dump_species(stats, 'speciesGraph.csv')
         print('done drawing graph')
     # Display the winning genome.
     
