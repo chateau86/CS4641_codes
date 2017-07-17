@@ -11,21 +11,28 @@ class gameState:
     gameGrid = []
     snakeDir = 0 #hdg/90
     score = 0
+    runTime = 0
+    dead = False
+    _localTime = 0
+    _timeLimit = 10
     _gridSize = (0,0)
     _foodCount = 0
     _foodLoc = (0,0)
     _headLoc = (0,0)
     _rng = random
-    def __init__(self, w = 10, h = 10, seed = 0, start = (5,5)):
+    def __init__(self, w = 10, h = 10, seed = 0, start = (5,5), timeLimit = 10):
         self._gridSize = (w,h)
         self._rng.seed(seed)
         self.gameGrid = np.zeros(self._gridSize)
         self.gameGrid[start] = 1
         self._headLoc = (start)
         self._placeFood()
+        self._timeLimit = timeLimit
+        self._localTime = self._timeLimit
     def run(self, ctrlIn):
         #ctrlIn = {-1: turn left, 0: no turn, 1: turn right}
         assert (-1<=ctrlIn<=1), 'Invalid input'
+        assert (not self.dead), 'Dead snake. Please replace gameState object.'
         self.snakeDir += ctrlIn
         self.snakeDir %= 4
         dPos = dirMap[self.snakeDir]
@@ -35,18 +42,26 @@ class gameState:
         #assert(lookAhead <= 0), 'Ate self, died.'
         if lookAhead > 1: #If see 1, tail will stay *just* clear of the mouth
             print('dead')
+            self.dead = True
             return self.score
+        if self._localTime <= 0:
+            print('time out')
+            self.dead = True
+            return self.score
+        self.runTime += 1
         #TODO: Death logic
         if lookAhead == -1:
             print('GOT FOOD')
             self.score += 1
             self._foodCount-= 1
             self._placeFood()
+            self._localTime = self._timeLimit
         else:
             #now decrement snek
-            print('decrement snake')
+            #print('decrement snake')
+            self._localTime -= 1
             self.gameGrid=decrementSnek(self.gameGrid)
-        print('add snake')
+        #print('add snake')
         self.gameGrid[newPos] = self.score + 2
         self._headLoc = newPos
         self.printState()
@@ -69,6 +84,8 @@ class gameState:
         print('hdg: {}'.format(self.snakeDir))
         print('score: {}'.format(self.score))
         print('brg: {}'.format(self._getBrg()))
+        print('runT: {}'.format(self.runTime))
+        print('locT: {}'.format(self._localTime))
         #pprint.pprint(self.gameGrid)
         #do fwd up
         pprint.pprint(self.gameGrid)

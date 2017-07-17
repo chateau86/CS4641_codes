@@ -23,5 +23,6 @@ def dump_species(statistics, fName):
     fOut.write('gen, species_sizes, curves\n')
     for line in dataOut:
         #print('{}, {}, {}\n'.format(line[0],line[1],line[2]))
-        fOut.write('{}, {}, {:}\n'.format(line[0],line[1],line[2]))
+        fOut.write('{}, {}, ['.format(line[0],line[1]) + " ".join("%.1f" % x for x in line[2])+"]")
+        
     fOut.close()
