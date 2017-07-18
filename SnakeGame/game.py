@@ -24,7 +24,8 @@ class gameState:
         self._gridSize = (w,h)
         self._rng.seed(seed)
         self.gameGrid = np.zeros(self._gridSize)
-        self.gameGrid[start] = 1
+        self.gameGrid[start] = 2
+        self.gameGrid[tuple(np.add(start,(1,0)))] = 1
         self._headLoc = (start)
         self._placeFood()
         self._timeLimit = timeLimit
