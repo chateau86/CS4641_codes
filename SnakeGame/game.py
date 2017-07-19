@@ -20,7 +20,8 @@ class gameState:
     _foodLoc = (0,0)
     _headLoc = (0,0)
     _rng = random
-    def __init__(self, w = 10, h = 10, seed = 0, start = (5,5), timeLimit = 10):
+    _verbose = False
+    def __init__(self, w = 10, h = 10, seed = 0, start = (5,5), timeLimit = 10, verbose = False):
         self._gridSize = (w,h)
         self._rng.seed(seed)
         self.gameGrid = np.zeros(self._gridSize)
@@ -42,17 +43,20 @@ class gameState:
         #print('lookahead at {} saw {}'.format(newPos,lookAhead))
         #assert(lookAhead <= 0), 'Ate self, died.'
         if lookAhead > 1: #If see 1, tail will stay *just* clear of the mouth
-            print('dead')
+            if self._verbose:
+                print('dead')
             self.dead = True
             return self.score
         if self._localTime <= 0:
-            print('time out')
+            if self._verbose:
+                print('time out')
             self.dead = True
             return self.score
         self.runTime += 1
         #TODO: Death logic
         if lookAhead == -1:
-            print('GOT FOOD')
+            if self._verbose:
+                print('GOT FOOD')
             self.score += 1
             self._foodCount-= 1
             self._placeFood()
@@ -65,7 +69,8 @@ class gameState:
         #print('add snake')
         self.gameGrid[newPos] = self.score + 2
         self._headLoc = newPos
-        self.printState()
+        if self._verbose:
+            self.printState()
         return -1
         
     def look(self):
