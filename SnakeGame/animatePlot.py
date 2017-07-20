@@ -3,6 +3,7 @@
 import game
 import matplotlib.animation as mpa
 import matplotlib.pyplot as plt
+import numpy as np
 def animate(g, moveArr, fName):
     #Input: 
     #   g: Game state initialized the same way as on the recorded run
@@ -14,7 +15,9 @@ def animate(g, moveArr, fName):
     fig = plt.figure()
     plt.axis([0, g._gridSize[0], 0, g._gridSize[1]])
     im = []
-    im.append([plt.imshow(g.gameGrid, 
+    normSnek = np.vectorize(lambda v: (v/max(g.score,1) + 0.1) if v>0 else v)
+    grid = normSnek(g.gameGrid)
+    im.append([plt.imshow(grid, 
         interpolation='none', 
         origin='upper',
         extent = [0, g._gridSize[0], 0, g._gridSize[1]],
@@ -23,9 +26,14 @@ def animate(g, moveArr, fName):
     #plt.show()
     for m in moveArr:
         #print('move: {}'.format(m))
-        g.run(m)
+        try:
+            g.run(m)
+        except Exception as e:
+            break
         #plt.grid(True)
-        im.append([plt.imshow(g.gameGrid, 
+        normSnek = np.vectorize(lambda v: (v/max(g.score,1) + 0.1) if v>0 else v)
+        grid = normSnek(g.gameGrid)
+        im.append([plt.imshow(grid, 
             interpolation='none', 
             origin='upper',
             extent = [0, g._gridSize[0], 0, g._gridSize[1]],
