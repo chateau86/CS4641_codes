@@ -1,2 +1,2 @@
-# CS4641_codes
-Code for CS4641 group project
+# Python_NEAT_Experiments
+Experiments with NEAT-Python (NeuroEvolution of Augmenting Topologies) on different datasets.
